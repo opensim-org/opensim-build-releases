@@ -140,7 +140,7 @@ after_test:
   - cd %APPVEYOR_BUILD_FOLDER% 
   # https://www.appveyor.com/docs/packaging-artifacts/
   # TODO use shortened git commit if not using a tag.
-  - SET OPENSIM_CORE_SOURCE_ZIP=OpenSimCore-%OPENSIM_CORE_GIT_TAG%.zip
+  - SET OPENSIM_CORE_SOURCE_ZIP=OpenSimCore-%OPENSIM_CORE_GIT_TAG%-source.zip
   - 7z a %OPENSIM_CORE_SOURCE_ZIP% %OPENSIM_CORE_INSTALL_DIR%
   - appveyor PushArtifact %OPENSIM_CORE_SOURCE_ZIP%
 
