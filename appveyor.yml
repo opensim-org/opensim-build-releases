@@ -78,17 +78,17 @@ install:
 
   - choco install doxygen.portable --yes
 
-  # TODO ## The GUI is built with the Netbeans platform.
-  # TODO # We need 8.2 and this isn't available on Chocolatey.
-  # TODO #- ps: choco install netbeans-jee --version 8.1 --yes --limit-output --allow-empty-checksums| Out-Null
-  # TODO # https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=javase
-  # TODO - appveyor DownloadFile http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-javase-windows.exe
-  # TODO # Make sure the NetBeans installer is not corrupted.
-  # TODO - ps: $expectedHash = "7b0646306a7488e617837da1517a86c08b7cf6fbe4dd9d74e8a4564b5ffde004".ToUpper()
-  # TODO - ps: $hashFromFile = Get-FileHash -Algorithm SHA256 -Path .\netbeans-8.2-javase-windows.exe
-  # TODO - ps: if (($hashFromFile.Hash) -ne ($expectedHash)) { Write-Error "Hash doesn't match." }
-  # TODO # Install NetBeans
-  # TODO - ps: .\netbeans-8.2-javase-windows.exe --silent | Out-Null # This installer is gregaroius.
+  ## The GUI is built with the Netbeans platform.
+  # We need 8.2 and this isn't available on Chocolatey.
+  #- ps: choco install netbeans-jee --version 8.1 --yes --limit-output --allow-empty-checksums| Out-Null
+  # https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=javase
+  - appveyor DownloadFile http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-javase-windows.exe
+  # Make sure the NetBeans installer is not corrupted.
+  - ps: $expectedHash = "7b0646306a7488e617837da1517a86c08b7cf6fbe4dd9d74e8a4564b5ffde004".ToUpper()
+  - ps: $hashFromFile = Get-FileHash -Algorithm SHA256 -Path .\netbeans-8.2-javase-windows.exe
+  - ps: if (($hashFromFile.Hash) -ne ($expectedHash)) { Write-Error "Hash doesn't match." }
+  # Install NetBeans
+  - ps: .\netbeans-8.2-javase-windows.exe --silent | Out-Null # This installer is gregaroius.
 
 build_script:
   ## Obtain opensim-core source code.
@@ -123,7 +123,7 @@ build_script:
   - git clone https://github.com/opensim-org/opensim-gui %OPENSIM_GUI_SOURCE_DIR%
   - cd %OPENSIM_GUI_SOURCE_DIR%
   # TODO how to handle tags for these submodules?
-  - git submodule update --init --recursive --depth 1 -- opensim-models opensim-visualizer Gui/opensim/threejs
+  - git submodule update --init --recursive -- opensim-models opensim-visualizer Gui/opensim/threejs
 
 
     # Build opensim-gui.
