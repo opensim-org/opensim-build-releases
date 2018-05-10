@@ -78,17 +78,17 @@ install:
 
   - choco install doxygen.portable --yes
 
-  ## The GUI is built with the Netbeans platform.
-  # We need 8.2 and this isn't available on Chocolatey.
-  #- ps: choco install netbeans-jee --version 8.1 --yes --limit-output --allow-empty-checksums| Out-Null
-  # https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=javase
-  - appveyor DownloadFile http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-javase-windows.exe
-  # Make sure the NetBeans installer is not corrupted.
-  - ps: $expectedHash = "7b0646306a7488e617837da1517a86c08b7cf6fbe4dd9d74e8a4564b5ffde004".ToUpper()
-  - ps: $hashFromFile = Get-FileHash -Algorithm SHA256 -Path .\netbeans-8.2-javase-windows.exe
-  - ps: if (($hashFromFile.Hash) -ne ($expectedHash)) { Write-Error "Hash doesn't match." }
-  # Install NetBeans
-  - ps: .\netbeans-8.2-javase-windows.exe --silent | Out-Null # This installer is gregaroius.
+  # TODO ## The GUI is built with the Netbeans platform.
+  # TODO # We need 8.2 and this isn't available on Chocolatey.
+  # TODO #- ps: choco install netbeans-jee --version 8.1 --yes --limit-output --allow-empty-checksums| Out-Null
+  # TODO # https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=javase
+  # TODO - appveyor DownloadFile http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-javase-windows.exe
+  # TODO # Make sure the NetBeans installer is not corrupted.
+  # TODO - ps: $expectedHash = "7b0646306a7488e617837da1517a86c08b7cf6fbe4dd9d74e8a4564b5ffde004".ToUpper()
+  # TODO - ps: $hashFromFile = Get-FileHash -Algorithm SHA256 -Path .\netbeans-8.2-javase-windows.exe
+  # TODO - ps: if (($hashFromFile.Hash) -ne ($expectedHash)) { Write-Error "Hash doesn't match." }
+  # TODO # Install NetBeans
+  # TODO - ps: .\netbeans-8.2-javase-windows.exe --silent | Out-Null # This installer is gregaroius.
 
 build_script:
   ## Obtain opensim-core source code.
@@ -96,7 +96,8 @@ build_script:
   # extract any information from the git repo?
   - SET OPENSIM_CORE_ZIP=%OPENSIM_CORE_GIT_TAG%.zip
   - appveyor DownloadFile https://github.com/opensim-org/opensim-core/archive/%OPENSIM_CORE_ZIP%
-  - 7z x %OPENSIM_CORE_ZIP% -o%OPENSIM_CORE_SOURCE_DIR%
+  - 7z x %OPENSIM_CORE_ZIP% # TODO -o%OPENSIM_CORE_SOURCE_DIR%
+  - mv opensim-core-%OPENSIM_CORE_GIT_TAG% %OPENSIM_CORE_SOURCE_DIR%
   - dir %OPENSIM_CORE_SOURCE_DIR%
 
   ## Superbuild dependencies. 
