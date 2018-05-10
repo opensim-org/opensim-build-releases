@@ -96,7 +96,7 @@ build_script:
   # extract any information from the git repo?
   - SET OPENSIM_CORE_ZIP=%OPENSIM_CORE_GIT_TAG%.zip
   - appveyor DownloadFile https://github.com/opensim-org/opensim-core/archive/%OPENSIM_CORE_ZIP%
-  - 7z e %OPENSIM_CORE_ZIP% -o%OPENSIM_CORE_SOURCE_DIR% -r
+  - 7z x %OPENSIM_CORE_ZIP% -o%OPENSIM_CORE_SOURCE_DIR%
 
   ## Superbuild dependencies. 
   - mkdir %OPENSIM_CORE_DEP_BUILD_DIR%
