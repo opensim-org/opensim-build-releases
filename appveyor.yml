@@ -56,6 +56,7 @@ init:
   # The CMake variable JAVA_HOME tells CMake where to look for Java.
   - SET JAVA_HOME=%JAVA_DIR%
   - SET PATH=%JAVA_HOME%\bin;%PATH%
+  - SET PATH="C:\Program Files (x86)\NSIS;%PATH%"
 
 cache:
   ## Cache swig, which we install via AppVeyor.
@@ -141,7 +142,7 @@ after_test:
   - appveyor PushArtifact %OPENSIM_CORE_SOURCE_ZIP%
 
   - cd %OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\
-  - "C:/Program Files (x86)/NSIS/makensis.exe" make_installer.nsi
+  - makensis make_installer.nsi
   - ps: Get-ChildItem .\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
   - SET OPENSIM_GUI_ZIP=OpenSim-%OPENSIM_GUI_GIT_TAG%.zip
