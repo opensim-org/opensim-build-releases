@@ -11,7 +11,7 @@ $PYTHON_DIR = "C:\\Python27-x64"
 $env:ANT_HOME = "C:\\Program Files\\NetBeans 8.2\\extide\\ant"
 $NSIS_DIR = "C:\\Program Files (x86)\\NSIS"
 
-$env:Path = "%PYTHON_DIR%;%PATH%
+$env:Path = "$PYTHON_DIR;$env:PATH"
 $OPENSIM_CORE_SOURCE_DIR = $pwd\opensim-core
 $OPENSIM_CORE_BUILD_DIR = $pwd\opensim-core-build
 $OPENSIM_CORE_INSTALL_DIR = $pwd\opensim-core-install
@@ -20,7 +20,8 @@ $OPENSIM_CORE_DEP_BUILD_DIR = $pwd\opensim-core-dep-build
 $OPENSIM_CORE_DEP_INSTALL_DIR = $pwd\opensim-core-dep-install
 $OPENSIM_GUI_SOURCE_DIR = $pwd\opensim-gui
 $OPENSIM_GUI_BUILD_DIR = $pwd\opensim-gui-build
-$env:Path = "$env:JAVA_HOME/bin;$env:Path"
+# https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables?view=powershell-6
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
 $env:Path = "$NSIS_DIR;$env.Path"
 
 [xml]$xml = Get-Content git-tags.xml
@@ -30,8 +31,9 @@ $OPENSIM_GUI_GIT_TAG = $xml.info.opensim_gui_git_tag
 ## Obtain opensim-core source code.
 # TODO should we clone the git repo instead of downloading a zip? Does CMake
 # extract any information from the git repo?
+$OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
 $OPENSIM_CORE_ZIP = $OPENSIM_CORE_GIT_TAG.zip
-(New-Object System.Net.WebClient).DownloadFile("https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP", $OPENSIM_CORE_ZIP)
+(New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
 7z x $OPENSIM_CORE_ZIP
 mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
 dir $OPENSIM_CORE_SOURCE_DIR
@@ -83,7 +85,7 @@ cd $OPENSIM_GUI_BUILD_DIR
 cmake $OPENSIM_GUI_SOURCE_DIR `
     -G"$CMAKE_GENERATOR" `
     -DCMAKE_PREFIX_PATH=$OPENSIM_CORE_INSTALL_DIR `
-    -DANT_ARGS="-Dnbplatform.default.netbeans.dest.dir=C:/Program Files/NetBeans 8.2;-Dnbplatform.default.harness.dir=C:/Program Files/NetBeans 8.2/harness"
+    -DANT_ARGS=`"-Dnbplatform.default.netbeans.dest.dir=C:/Program Files/NetBeans 8.2;-Dnbplatform.default.harness.dir=C:/Program Files/NetBeans 8.2/harness`"
 cmake --build . --target CopyOpenSimCore --config Release
 cmake --build . --target CopyModels --config Release
 cmake --build . --target PrepareInstaller --config Release
@@ -102,9 +104,9 @@ $OPENSIM_CORE_SOURCE_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENS
 # TODO Visual C++ redistributable.
 # https://docs.microsoft.com/en-us/cpp/ide/determining-which-dlls-to-redistribute
 # 
-cd $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\
-makensis $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\make_installer.nsi
-mv $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\*.exe `
+cd $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\
+makensis $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\make_installer.nsi
+mv $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\*.exe `
     $env:APPVEYOR_BUILD_FOLDER\release\
 
 $OPENSIM_GUI_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip
