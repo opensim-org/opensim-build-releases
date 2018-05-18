@@ -21,7 +21,7 @@ $OPENSIM_CORE_DEP_INSTALL_DIR = $pwd\opensim-core-dep-install
 $OPENSIM_GUI_SOURCE_DIR = $pwd\opensim-gui
 $OPENSIM_GUI_BUILD_DIR = $pwd\opensim-gui-build
 # The CMake variable JAVA_HOME tells CMake where to look for Java.
-$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+$env:Path = "$env:JAVA_HOME\\bin;$env:Path"
 $env:Path = "$NSIS_DIR;$env.Path"
 
 [xml]$xml = Get-Content git-tags.xml
