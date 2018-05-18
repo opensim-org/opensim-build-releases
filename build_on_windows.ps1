@@ -20,7 +20,6 @@ $OPENSIM_CORE_DEP_BUILD_DIR = $pwd\opensim-core-dep-build
 $OPENSIM_CORE_DEP_INSTALL_DIR = $pwd\opensim-core-dep-install
 $OPENSIM_GUI_SOURCE_DIR = $pwd\opensim-gui
 $OPENSIM_GUI_BUILD_DIR = $pwd\opensim-gui-build
-# The CMake variable JAVA_HOME tells CMake where to look for Java.
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 $env:Path = "$NSIS_DIR;$env.Path"
 
@@ -90,3 +89,23 @@ cmake --build . --target CopyModels --config Release
 cmake --build . --target PrepareInstaller --config Release
 cmake --build . --target CopyJRE --config Release
 cmake --build . --target CopyVisualizer --config Release
+
+
+# Create files to distribute.
+mkdir $env:APPVEYOR_BUILD_FOLDER\release
+cd $env:APPVEYOR_BUILD_FOLDER\release
+# TODO use shortened git commit if not using a tag.
+$OPENSIM_CORE_SOURCE_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip
+7z a $OPENSIM_CORE_SOURCE_ZIP $OPENSIM_CORE_INSTALL_DIR
+
+# TODO ResourceHacker. Or can NSIS set the application icon for us?
+# TODO Visual C++ redistributable.
+# https://docs.microsoft.com/en-us/cpp/ide/determining-which-dlls-to-redistribute
+# 
+cd $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\
+makensis $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\make_installer.nsi
+mv $OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\*.exe `
+    $env:APPVEYOR_BUILD_FOLDER\release\
+
+$OPENSIM_GUI_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip
+7z a $OPENSIM_GUI_ZIP $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\opensim\

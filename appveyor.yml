@@ -78,13 +78,9 @@ after_test:
   - 7z a %OPENSIM_CORE_SOURCE_ZIP% %OPENSIM_CORE_INSTALL_DIR%
   - appveyor PushArtifact %OPENSIM_CORE_SOURCE_ZIP%
 
-  - cd %OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\
-  - makensis make_installer.nsi
-  - ps: Get-ChildItem .\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
-
-  - SET OPENSIM_GUI_ZIP=OpenSim-%OPENSIM_GUI_GIT_TAG%.zip
-  - 7z a %OPENSIM_GUI_ZIP% %OPENSIM_GUI_SOURCE_DIR%\Gui\opensim\dist\installer\opensim\
-  - appveyor PushArtifact %OPENSIM_GUI_ZIP%
+  # Upload ZIP and EXE files in the release folder.
+  - ps: Get-ChildItem .\release\*.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+  - ps: Get-ChildItem .\release\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 # The following, if uncommented, should allow you to remote-desktop into
 # the Appveyor build machine.
