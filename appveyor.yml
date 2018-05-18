@@ -24,8 +24,11 @@ nuget:
 
 environment:
   matrix:
+    # The Visual C++ compiler that comes with Visual Studio 2015 is v140.
     #- CMAKE_TOOLSET: "v140"
+    # The Visual C++ compiler that comes with Visual Studio 2017 is v141.
     - CMAKE_TOOLSET: "v141"
+    # Visual Studio 2017 can use either Visual C++ compiler.
 
 
 cache:
@@ -60,7 +63,11 @@ install:
   - ps: .\netbeans-8.2-javase-windows.exe --silent | Out-Null # This installer is gregaroius.
 
 build_script:
-  - ps: .\build_on_windows.ps1
+  # All the actual building is done in a separate PowerShell script:
+  # The idea is that the PowerShell script could be invoked locally.
+  # The script takes 1 argument: The toolset to use (basically, compiler
+  # version).
+  - ps: .\build_on_windows.ps1 -CMAKE_TOOLSET=$CMAKE_TOOLSET
 
 after_test:
   - cd %APPVEYOR_BUILD_FOLDER% 
