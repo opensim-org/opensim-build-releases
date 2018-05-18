@@ -12,14 +12,14 @@ $env:ANT_HOME = "C:\\Program Files\\NetBeans 8.2\\extide\\ant"
 $NSIS_DIR = "C:\\Program Files (x86)\\NSIS"
 
 $env:Path = "$PYTHON_DIR;$env:PATH"
-$OPENSIM_CORE_SOURCE_DIR = $pwd\opensim-core
-$OPENSIM_CORE_BUILD_DIR = $pwd\opensim-core-build
-$OPENSIM_CORE_INSTALL_DIR = $pwd\opensim-core-install
-$OPENSIM_CORE_DEP_SOURCE_DIR = $OPENSIM_CORE_SOURCE_DIR\dependencies
-$OPENSIM_CORE_DEP_BUILD_DIR = $pwd\opensim-core-dep-build
-$OPENSIM_CORE_DEP_INSTALL_DIR = $pwd\opensim-core-dep-install
-$OPENSIM_GUI_SOURCE_DIR = $pwd\opensim-gui
-$OPENSIM_GUI_BUILD_DIR = $pwd\opensim-gui-build
+$OPENSIM_CORE_SOURCE_DIR = "$pwd\opensim-core"
+$OPENSIM_CORE_BUILD_DIR = "$pwd\opensim-core-build"
+$OPENSIM_CORE_INSTALL_DIR = $pwd\opensim-core-install"
+$OPENSIM_CORE_DEP_SOURCE_DIR = "$OPENSIM_CORE_SOURCE_DIR\dependencies"
+$OPENSIM_CORE_DEP_BUILD_DIR = "$pwd\opensim-core-dep-build"
+$OPENSIM_CORE_DEP_INSTALL_DIR = "$pwd\opensim-core-dep-install"
+$OPENSIM_GUI_SOURCE_DIR = "$pwd\opensim-gui"
+$OPENSIM_GUI_BUILD_DIR = "$pwd\opensim-gui-build"
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables?view=powershell-6
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 $env:Path = "$NSIS_DIR;$env.Path"
@@ -97,7 +97,7 @@ cmake --build . --target CopyVisualizer --config Release
 mkdir $env:APPVEYOR_BUILD_FOLDER\release
 cd $env:APPVEYOR_BUILD_FOLDER\release
 # TODO use shortened git commit if not using a tag.
-$OPENSIM_CORE_SOURCE_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip
+$OPENSIM_CORE_SOURCE_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
 7z a $OPENSIM_CORE_SOURCE_ZIP $OPENSIM_CORE_INSTALL_DIR
 
 # TODO ResourceHacker. Or can NSIS set the application icon for us?
@@ -109,5 +109,5 @@ makensis $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\make_installer.nsi
 mv $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\*.exe `
     $env:APPVEYOR_BUILD_FOLDER\release\
 
-$OPENSIM_GUI_ZIP = $env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip
+$OPENSIM_GUI_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip"
 7z a $OPENSIM_GUI_ZIP $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\opensim\
