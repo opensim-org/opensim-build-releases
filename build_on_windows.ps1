@@ -24,19 +24,19 @@ $OPENSIM_GUI_BUILD_DIR = "$pwd\opensim-gui-build"
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 $env:Path = "$NSIS_DIR;$env.Path"
 
-[xml]$xml = Get-Content git-tags.xml
+[xml]$xml = Get-Content git_tags.xml
 $OPENSIM_CORE_GIT_TAG = $xml.info.opensim_core_git_tag
 $OPENSIM_GUI_GIT_TAG = $xml.info.opensim_gui_git_tag
 
-# TODO ## Obtain opensim-core source code.
-# TODO # TODO should we clone the git repo instead of downloading a zip? Does CMake
-# TODO # extract any information from the git repo?
-# TODO $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
-# TODO $OPENSIM_CORE_ZIP = $OPENSIM_CORE_GIT_TAG.zip
-# TODO (New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
-# TODO 7z x $OPENSIM_CORE_ZIP
-# TODO mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
-# TODO dir $OPENSIM_CORE_SOURCE_DIR
+## Obtain opensim-core source code.
+# TODO should we clone the git repo instead of downloading a zip? Does CMake
+# extract any information from the git repo?
+$OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
+$OPENSIM_CORE_ZIP = $OPENSIM_CORE_GIT_TAG.zip
+(New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
+7z x $OPENSIM_CORE_ZIP
+mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
+dir $OPENSIM_CORE_SOURCE_DIR
 # TODO 
 # TODO ## Superbuild dependencies. 
 # TODO mkdir $OPENSIM_CORE_DEP_BUILD_DIR
