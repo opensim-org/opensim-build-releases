@@ -31,10 +31,11 @@ $OPENSIM_GUI_GIT_TAG = $xml.info.opensim_gui_git_tag
 ## Obtain opensim-core source code.
 # TODO should we clone the git repo instead of downloading a zip? Does CMake
 # extract any information from the git repo?
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
-$OPENSIM_CORE_ZIP = $OPENSIM_CORE_GIT_TAG.zip
+$OPENSIM_CORE_ZIP = "$OPENSIM_CORE_GIT_TAG.zip"
 (New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
-7z x $OPENSIM_CORE_ZIP
+& "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
 mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
 dir $OPENSIM_CORE_SOURCE_DIR
 # TODO 
@@ -98,7 +99,7 @@ dir $OPENSIM_CORE_SOURCE_DIR
 # TODO cd $env:APPVEYOR_BUILD_FOLDER\release
 # TODO # TODO use shortened git commit if not using a tag.
 # TODO $OPENSIM_CORE_SOURCE_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
-# TODO 7z a $OPENSIM_CORE_SOURCE_ZIP $OPENSIM_CORE_INSTALL_DIR
+# TODO & "C:\Program Files\7-Zip\7z.exe" a $OPENSIM_CORE_SOURCE_ZIP $OPENSIM_CORE_INSTALL_DIR
 # TODO 
 # TODO # TODO ResourceHacker. Or can NSIS set the application icon for us?
 # TODO # TODO Visual C++ redistributable.
@@ -110,4 +111,4 @@ dir $OPENSIM_CORE_SOURCE_DIR
 # TODO     $env:APPVEYOR_BUILD_FOLDER\release\
 # TODO 
 # TODO $OPENSIM_GUI_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip"
-# TODO 7z a $OPENSIM_GUI_ZIP $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\opensim\
+# TODO & "C:\Program Files\7-Zip\7z.exe" a $OPENSIM_GUI_ZIP $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\opensim\
