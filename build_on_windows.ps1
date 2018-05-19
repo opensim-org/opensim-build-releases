@@ -34,6 +34,7 @@ $OPENSIM_GUI_GIT_TAG = $xml.info.opensim_gui_git_tag
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $OPENSIM_CORE_ZIP = "$OPENSIM_CORE_GIT_TAG.zip"
 $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
+dir
 (New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
 & "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
 mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
