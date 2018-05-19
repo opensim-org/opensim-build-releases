@@ -37,18 +37,18 @@ $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive
 dir
 (New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
 dir
-& "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
-mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
-dir $OPENSIM_CORE_SOURCE_DIR
+# # & "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
+# # mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
+# # dir $OPENSIM_CORE_SOURCE_DIR
 
-## Superbuild dependencies. 
-# mkdir $OPENSIM_CORE_DEP_BUILD_DIR
-cd $OPENSIM_CORE_DEP_BUILD_DIR
-# The backtick is line continuation, but make sure there is no whitespace
-# after the backtick!
-cmake $OPENSIM_CORE_DEP_SOURCE_DIR `
-    -G"$CMAKE_GENERATOR" `
-    -T"$CMAKE_TOOLSET" `
+# # ## Superbuild dependencies. 
+# # # mkdir $OPENSIM_CORE_DEP_BUILD_DIR
+# # cd $OPENSIM_CORE_DEP_BUILD_DIR
+# # # The backtick is line continuation, but make sure there is no whitespace
+# # # after the backtick!
+# # cmake $OPENSIM_CORE_DEP_SOURCE_DIR `
+    # # -G"$CMAKE_GENERATOR" `
+    # # -T"$CMAKE_TOOLSET" `
     # # -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_DEP_INSTALL_DIR `
     # # -DSUPERBUILD_simbody=ON
 # # cmake --build . --config Release -- /maxcpucount:4 /verbosity:quiet
