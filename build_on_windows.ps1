@@ -22,48 +22,48 @@ $OPENSIM_GUI_SOURCE_DIR = "$pwd\opensim-gui"
 $OPENSIM_GUI_BUILD_DIR = "$pwd\opensim-gui-build"
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_environment_variables?view=powershell-6
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-$env:Path = "$NSIS_DIR;$env.Path"
+$env:Path = "$NSIS_DIR;$env:Path"
 
 [xml]$xml = Get-Content git_tags.xml
 $OPENSIM_CORE_GIT_TAG = $xml.info.opensim_core_git_tag
 $OPENSIM_GUI_GIT_TAG = $xml.info.opensim_gui_git_tag
 
-## Obtain opensim-core source code.
-# TODO should we clone the git repo instead of downloading a zip? Does CMake
-# extract any information from the git repo?
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$OPENSIM_CORE_ZIP = "$OPENSIM_CORE_GIT_TAG.zip"
-$OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
-(New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
-& "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
-mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
-dir $OPENSIM_CORE_SOURCE_DIR
-# TODO 
-# TODO ## Superbuild dependencies. 
-# TODO mkdir $OPENSIM_CORE_DEP_BUILD_DIR
-# TODO cd $OPENSIM_CORE_DEP_BUILD_DIR
-# TODO # The backtick is line continuation, but make sure there is no whitespace
-# TODO # after the backtick!
-# TODO cmake $OPENSIM_CORE_DEP_SOURCE_DIR `
-# TODO     -G"$CMAKE_GENERATOR" `
-# TODO     -T"$CMAKE_TOOLSET" `
-# TODO     -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_DEP_INSTALL_DIR `
-# TODO     -DSUPERBUILD_simbody=ON
-# TODO cmake --build . --config Release -- /maxcpucount:4 /verbosity:quiet
-# TODO mkdir $OPENSIM_CORE_BUILD_DIR
-# TODO ## Configure and build OpenSim.
-# TODO cd $OPENSIM_CORE_BUILD_DIR
-# TODO # Configure.
-# TODO # Set the CXXFLAGS environment variable to turn warnings into errors.
-# TODO cmake -E env CXXFLAGS="/WX" `
-# TODO     cmake $OPENSIM_CORE_SOURCE_DIR `
-# TODO         -G"$CMAKE_GENERATOR" `
-# TODO         -T$CMAKE_TOOLSET `
-# TODO         -DOPENSIM_DEPENDENCIES_DIR=$OPENSIM_CORE_DEP_INSTALL_DIR `
-# TODO         -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR `
-# TODO         -DBUILD_JAVA_WRAPPING=ON `
-# TODO         -DBUILD_PYTHON_WRAPPING=ON `
-# TODO         -DWITH_BTK:BOOL=ON
+# # ## Obtain opensim-core source code.
+# # # TODO should we clone the git repo instead of downloading a zip? Does CMake
+# # # extract any information from the git repo?
+# # [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# # $OPENSIM_CORE_ZIP = "$OPENSIM_CORE_GIT_TAG.zip"
+# # $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP"
+# # (New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
+# # & "C:\Program Files\7-Zip\7z.exe" x $OPENSIM_CORE_ZIP
+# # mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
+# # dir $OPENSIM_CORE_SOURCE_DIR
+
+## Superbuild dependencies. 
+# # mkdir $OPENSIM_CORE_DEP_BUILD_DIR
+cd $OPENSIM_CORE_DEP_BUILD_DIR
+# The backtick is line continuation, but make sure there is no whitespace
+# after the backtick!
+cmake $OPENSIM_CORE_DEP_SOURCE_DIR `
+    -G"$CMAKE_GENERATOR" `
+    -T"$CMAKE_TOOLSET" `
+    -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_DEP_INSTALL_DIR `
+    -DSUPERBUILD_simbody=ON
+cmake --build . --config Release -- /maxcpucount:4 /verbosity:quiet
+mkdir $OPENSIM_CORE_BUILD_DIR
+## Configure and build OpenSim.
+cd $OPENSIM_CORE_BUILD_DIR
+# Configure.
+# Set the CXXFLAGS environment variable to turn warnings into errors.
+cmake -E env CXXFLAGS="/WX" `
+    cmake $OPENSIM_CORE_SOURCE_DIR `
+        -G"$CMAKE_GENERATOR" `
+        -T$CMAKE_TOOLSET `
+        -DOPENSIM_DEPENDENCIES_DIR=$OPENSIM_CORE_DEP_INSTALL_DIR `
+        -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR `
+        -DBUILD_JAVA_WRAPPING=ON `
+        -DBUILD_PYTHON_WRAPPING=ON `
+        -DWITH_BTK:BOOL=ON
 # TODO 
 # TODO # Build.
 # TODO cmake --build . --target doxygen --config Release
