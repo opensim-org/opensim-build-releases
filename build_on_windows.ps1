@@ -11,6 +11,7 @@ $PYTHON_DIR = "C:\\Python27-x64"
 $env:ANT_HOME = "C:\\Program Files\\NetBeans 8.2\\extide\\ant"
 $NSIS_DIR = "C:\\Program Files (x86)\\NSIS"
 
+$BASE_DIR = "$pwd"
 $env:Path = "$PYTHON_DIR;$env:PATH"
 $OPENSIM_CORE_SOURCE_DIR = "$pwd\opensim-core"
 $OPENSIM_CORE_BUILD_DIR = "$pwd\opensim-core-build"
@@ -47,23 +48,23 @@ cd $OPENSIM_CORE_DEP_BUILD_DIR
 cmake "$OPENSIM_CORE_DEP_SOURCE_DIR" `
     -G"$CMAKE_GENERATOR" `
     -T"$CMAKE_TOOLSET" `
-    -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_DEP_INSTALL_DIR" `
-    -DSUPERBUILD_simbody=ON
+    -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_DEP_INSTALL_DIR"
 cmake --build . --config Release -- /maxcpucount:4 /verbosity:quiet
 mkdir $OPENSIM_CORE_BUILD_DIR
+
 ## Configure and build OpenSim.
 cd $OPENSIM_CORE_BUILD_DIR
 # Configure.
 # Set the CXXFLAGS environment variable to turn warnings into errors.
-cmake -E env CXXFLAGS="/WX" `
-    cmake "$OPENSIM_CORE_SOURCE_DIR" `
-        -G"$CMAKE_GENERATOR" `
-        -T"$CMAKE_TOOLSET" `
-        -DOPENSIM_DEPENDENCIES_DIR="$OPENSIM_CORE_DEP_INSTALL_DIR" `
-        -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_INSTALL_DIR" `
-        -DBUILD_JAVA_WRAPPING=ON `
-        -DBUILD_PYTHON_WRAPPING=ON `
-        -DWITH_BTK:BOOL=ON
+cmake "$OPENSIM_CORE_SOURCE_DIR" `
+    -G"$CMAKE_GENERATOR" `
+    -T"$CMAKE_TOOLSET" `
+    -DOPENSIM_DEPENDENCIES_DIR="$OPENSIM_CORE_DEP_INSTALL_DIR" `
+    -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_INSTALL_DIR" `
+    -DBUILD_JAVA_WRAPPING=ON `
+    -DBUILD_PYTHON_WRAPPING=ON `
+    -DWITH_BTK:BOOL=ON `
+    -DBUILD_TESTING=OFF
 
 # Build.
 cmake --build . --target doxygen --config Release
@@ -96,10 +97,10 @@ cmake --build . --target CopyVisualizer --config Release
 
 
 # Create files to distribute.
-mkdir $env:APPVEYOR_BUILD_FOLDER\release
-cd $env:APPVEYOR_BUILD_FOLDER\release
+mkdir $BASE_DIR\release
+cd $BASE_DIR\release
 # TODO use shortened git commit if not using a tag.
-$OPENSIM_CORE_SOURCE_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
+$OPENSIM_CORE_SOURCE_ZIP = "$BASE_DIR\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
 & "C:\Program Files\7-Zip\7z.exe" a "$OPENSIM_CORE_SOURCE_ZIP" "$OPENSIM_CORE_INSTALL_DIR"
 
 # TODO ResourceHacker. Or can NSIS set the application icon for us?
@@ -109,9 +110,9 @@ $OPENSIM_CORE_SOURCE_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPEN
 cd $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\
 makensis $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\make_installer.nsi
 mv $OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\*.exe `
-    $env:APPVEYOR_BUILD_FOLDER\release\
+    $BASE_DIR\release\
 
-$OPENSIM_GUI_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip"
+$OPENSIM_GUI_ZIP = "$BASE_DIR\release\OpenSim-$OPENSIM_GUI_GIT_TAG.zip"
 & "C:\Program Files\7-Zip\7z.exe" a "$OPENSIM_GUI_ZIP" "$OPENSIM_GUI_SOURCE_DIR\Gui\opensim\dist\installer\opensim\"
 
 
