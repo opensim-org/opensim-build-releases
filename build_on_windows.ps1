@@ -44,10 +44,10 @@ mkdir $OPENSIM_CORE_DEP_BUILD_DIR
 cd $OPENSIM_CORE_DEP_BUILD_DIR
 # The backtick is line continuation, but make sure there is no whitespace
 # after the backtick!
-cmake $OPENSIM_CORE_DEP_SOURCE_DIR `
+cmake "$OPENSIM_CORE_DEP_SOURCE_DIR" `
     -G"$CMAKE_GENERATOR" `
     -T"$CMAKE_TOOLSET" `
-    -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_DEP_INSTALL_DIR `
+    -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_DEP_INSTALL_DIR" `
     -DSUPERBUILD_simbody=ON
 cmake --build . --config Release -- /maxcpucount:4 /verbosity:quiet
 mkdir $OPENSIM_CORE_BUILD_DIR
@@ -56,11 +56,11 @@ cd $OPENSIM_CORE_BUILD_DIR
 # Configure.
 # Set the CXXFLAGS environment variable to turn warnings into errors.
 cmake -E env CXXFLAGS="/WX" `
-    cmake $OPENSIM_CORE_SOURCE_DIR `
+    cmake "$OPENSIM_CORE_SOURCE_DIR" `
         -G"$CMAKE_GENERATOR" `
-        -T$CMAKE_TOOLSET `
-        -DOPENSIM_DEPENDENCIES_DIR=$OPENSIM_CORE_DEP_INSTALL_DIR `
-        -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR `
+        -T"$CMAKE_TOOLSET" `
+        -DOPENSIM_DEPENDENCIES_DIR="$OPENSIM_CORE_DEP_INSTALL_DIR" `
+        -DCMAKE_INSTALL_PREFIX="$OPENSIM_CORE_INSTALL_DIR" `
         -DBUILD_JAVA_WRAPPING=ON `
         -DBUILD_PYTHON_WRAPPING=ON `
         -DWITH_BTK:BOOL=ON
@@ -85,7 +85,8 @@ mkdir $OPENSIM_GUI_BUILD_DIR
 cd $OPENSIM_GUI_BUILD_DIR
 cmake $OPENSIM_GUI_SOURCE_DIR `
     -G"$CMAKE_GENERATOR" `
-    -DCMAKE_PREFIX_PATH=$OPENSIM_CORE_INSTALL_DIR `
+    -T"$CMAKE_TOOLSET" `
+    -DCMAKE_PREFIX_PATH="$OPENSIM_CORE_INSTALL_DIR" `
     -DANT_ARGS="-Dnbplatform.default.netbeans.dest.dir=C:/Program Files/NetBeans 8.2;-Dnbplatform.default.harness.dir=C:/Program Files/NetBeans 8.2/harness"
 cmake --build . --target CopyOpenSimCore --config Release
 cmake --build . --target CopyModels --config Release
@@ -99,7 +100,7 @@ mkdir $env:APPVEYOR_BUILD_FOLDER\release
 cd $env:APPVEYOR_BUILD_FOLDER\release
 # TODO use shortened git commit if not using a tag.
 $OPENSIM_CORE_SOURCE_ZIP = "$env:APPVEYOR_BUILD_FOLDER\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
-& "C:\Program Files\7-Zip\7z.exe" a $OPENSIM_CORE_SOURCE_ZIP $OPENSIM_CORE_INSTALL_DIR
+& "C:\Program Files\7-Zip\7z.exe" a "$OPENSIM_CORE_SOURCE_ZIP" "$OPENSIM_CORE_INSTALL_DIR"
 
 # TODO ResourceHacker. Or can NSIS set the application icon for us?
 # TODO Visual C++ redistributable.
