@@ -37,7 +37,7 @@ $OPENSIM_CORE_ARCHIVE_URL = "https://github.com/opensim-org/opensim-core/archive
 echo "HI"
 dir
 echo "HELLO"
-(New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, $OPENSIM_CORE_ZIP)
+(New-Object System.Net.WebClient).DownloadFile($OPENSIM_CORE_ARCHIVE_URL, "$pwd\$OPENSIM_CORE_ZIP")
 echo "AGAIN"
 dir
 echo "HEY"
