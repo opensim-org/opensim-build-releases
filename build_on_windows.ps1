@@ -40,7 +40,7 @@ mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
 dir $OPENSIM_CORE_SOURCE_DIR
 
 ## Superbuild dependencies. 
-# mkdir $OPENSIM_CORE_DEP_BUILD_DIR
+mkdir $OPENSIM_CORE_DEP_BUILD_DIR
 cd $OPENSIM_CORE_DEP_BUILD_DIR
 # The backtick is line continuation, but make sure there is no whitespace
 # after the backtick!
