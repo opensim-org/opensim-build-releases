@@ -31,7 +31,7 @@ make -j8 install
 
 
 ## Obtain opensim-core source code.
-OPENSIM_CORE_ZIP = "$OPENSIM_CORE_GIT_TAG.zip"
+OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
 wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
 unzip $OPENSIM_CORE_ZIP
 mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
