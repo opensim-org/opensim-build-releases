@@ -17,4 +17,4 @@ addons:
   ssh_known_hosts: frs.sourceforge.net
 
 script:
-  - sh build_on_mac.sh
+  - travis_wait 80 sh build_on_mac.sh
