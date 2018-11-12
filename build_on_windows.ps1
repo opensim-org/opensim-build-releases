@@ -73,6 +73,7 @@ cmake --build . --target install --config Release -- /maxcpucount:4 /verbosity:q
 # Obtain opensim-gui source code.
 git clone https://github.com/opensim-org/opensim-gui $OPENSIM_GUI_SOURCE_DIR
 cd $OPENSIM_GUI_SOURCE_DIR
+git checkout $OPENSIM_GUI_GIT_TAG
 # TODO how to handle tags for these submodules?
 git submodule update --init --recursive -- `
     opensim-models `
