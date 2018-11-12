@@ -1,0 +1,20 @@
+language: java
+
+# Use container-based infrastructure to allow caching (for ccache).
+sudo: false 
+
+git:
+  # Travis CI tries to clone submodules for us, but we don't want all
+  # the submodules.
+  submodules: false
+
+matrix:
+  include:
+    - os: osx
+
+addons:
+  # To avoid an interactive prompt when uploading binaries to sourceforge.
+  ssh_known_hosts: frs.sourceforge.net
+
+script:
+  - travis_wait 80 sh build_on_mac.sh
