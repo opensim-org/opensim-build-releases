@@ -35,7 +35,7 @@ then
 
     ## Obtain opensim-core source code.
     OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
-    wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
+    wget --quiet https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
     unzip -q $OPENSIM_CORE_ZIP
     mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
     
@@ -57,7 +57,7 @@ then
 
     # Install SWIG.
     mkdir $BASE_DIR/swig-source && cd $BASE_DIR/swig-source
-    wget https://github.com/swig/swig/archive/rel-$SWIG_VER.tar.gz
+    wget --quiet https://github.com/swig/swig/archive/rel-$SWIG_VER.tar.gz
     tar xzf rel-$SWIG_VER.tar.gz && cd swig-rel-$SWIG_VER
     sh autogen.sh
     ./configure --prefix=$SWIG_DIR --disable-ccache
@@ -68,7 +68,7 @@ then
     then
         ## Obtain opensim-core source code.
         OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
-        wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
+        wget --quiet https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
         unzip -q $OPENSIM_CORE_ZIP
         mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
     fi
