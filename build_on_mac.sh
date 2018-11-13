@@ -61,8 +61,8 @@ then
     tar xzf rel-$SWIG_VER.tar.gz && cd swig-rel-$SWIG_VER
     sh autogen.sh
     ./configure --prefix=$SWIG_DIR --disable-ccache
-    make
-    make -j8 install
+    make V=0
+    make -j8 install V=0
 
     if [[ $STAGE -ne 0 ]]
     then

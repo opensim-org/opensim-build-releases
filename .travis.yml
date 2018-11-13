@@ -42,7 +42,54 @@ jobs:
         - ls
         - unzip -q opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
         - ls
-        - travis_wait 80 sh build_on_mac.sh -s 2
+
+        ## Install SWIG.
+        - mkdir $BASE_DIR/swig-source && cd $BASE_DIR/swig-source
+        - wget https://github.com/swig/swig/archive/rel-$SWIG_VER.tar.gz
+        - tar xzf rel-$SWIG_VER.tar.gz && cd swig-rel-$SWIG_VER
+        - sh autogen.sh
+        - ./configure --prefix=$SWIG_DIR --disable-ccache
+        - make V=0
+        - make -j8 install V=0
+
+        ## Obtain opensim-core source code.
+        - OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
+        - wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
+        - unzip -q $OPENSIM_CORE_ZIP
+        - mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
+
+        # Configure and build opensim-core.
+        - mkdir $OPENSIM_CORE_BUILD_DIR && cd $OPENSIM_CORE_BUILD_DIR
+        ## Store CMake arguments in bash array.
+        # https://stackoverflow.com/questions/1951506/add-a-new-element-to-an-array-without-specifying-the-index-in-bash
+        - OSIM_CMAKE_ARGS=($OPENSIM_CORE_SOURCE_DIR -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR -DCMAKE_BUILD_TYPE=$BTYPE)
+        - 
+        # The deployed binaries are used by the GUI, which requires the non-FHS
+        # layout.
+        - OSIM_CMAKE_ARGS+=(-DOPENSIM_INSTALL_UNIX_FHS=OFF)
+        - 
+        # The minimum macOS/OSX version we support.
+        - OSIM_CMAKE_ARGS+=(-DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_TARGET)
+        - 
+        # Dependencies.
+        - OSIM_CMAKE_ARGS+=(-DOPENSIM_DEPENDENCIES_DIR=$OPENSIM_CORE_DEP_INSTALL_DIR -DWITH_BTK:BOOL=ON)
+        - 
+        # Bindings.
+        - OSIM_CMAKE_ARGS+=(-DBUILD_PYTHON_WRAPPING=ON -DBUILD_JAVA_WRAPPING=ON -DSWIG_EXECUTABLE=$SWIG_DIR/bin/swig)
+        # On Mac, use system python instead of Homebrew python.
+        - OSIM_CMAKE_ARGS+=(-DPYTHON_EXECUTABLE=/usr/bin/python)
+        - 
+        # Doxygen.
+        - OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api/index.html")
+        - 
+        - OSIM_CMAKE_ARGS+=(-DBUILD_TESTING=OFF)
+        - 
+        - printf '%s\n' "${OSIM_CMAKE_ARGS[@]}"
+        - cmake "${OSIM_CMAKE_ARGS[@]}"
+        - 
+        - make doxygen
+        - make -j$NPROC install
+        # TODO - travis_wait 80 sh build_on_mac.sh -s 2
       before_deploy:
         - zip --symlinks --recurse-paths --quiet opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-core-install
       deploy:
