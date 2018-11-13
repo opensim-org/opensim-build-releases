@@ -50,6 +50,18 @@ before_deploy:
   # Register this private key with this client (the travis machine).
   - chmod 600 /tmp/deploy_myosin_sourceforge_rsa
   - ssh-add /tmp/deploy_myosin_sourceforge_rsa
+  - cat 'hello cat' > testing.txt # TODO
+
+deploy:
+  # Uploads to sourceforge.net/projects/myosin
+  # See https://docs.travis-ci.com/user/deployment/custom/
+  # '--archive' preserves symlinks.
+  provider: script
+  skip_cleanup: true
+  script: rsync --archive --compress --verbose testing.txt opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+  on:
+    all_branches: true
+    condition: "$DEPLOY = yes"
 
 # Process for securely uploading files to Sourceforge, taken from
 # https://oncletom.io/2016/travis-ssh-deploy/:
