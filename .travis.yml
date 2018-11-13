@@ -52,6 +52,7 @@ jobs:
         - make -j4
           # TODO - travis_wait 80 sh build_on_mac.sh -s 1
       before_deploy:
+        - cd $TRAVIS_BUILD_DIR
         - sh set_up_ssh.sh
         - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
         - echo $OPENSIM_CORE_GIT_TAG
