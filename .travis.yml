@@ -12,7 +12,8 @@ addons:
 stages:
   - name: opensim-core-dep
     if: branch = SKIP_FOR_NOW_TODO
-  - opensim-core
+  - name: opensim-core
+    if: branch = SKIP_FOR_NOW_TODO
   - opensim-gui
   
 jobs:
@@ -135,6 +136,7 @@ jobs:
         - brew update
         - brew cask install netbeans
         - brew cleanup
+        - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
         - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/mac/opensim-core-$OPENSIM_CORE_GIT_TAG.zip
         - ls
         - unzip -q opensim-core-$OPENSIM_CORE_GIT_TAG.zip
