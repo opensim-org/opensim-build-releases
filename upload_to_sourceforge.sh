@@ -7,3 +7,9 @@ eval "$(ssh-agent -s)"
 # Register this private key with this client (the travis machine).
 chmod 600 /tmp/deploy_myosin_sourceforge_rsa
 ssh-add /tmp/deploy_myosin_sourceforge_rsa
+
+
+## Upload to sourceforge.net/projects/myosin
+# See https://docs.travis-ci.com/user/deployment/custom/
+# '--archive' preserves symlinks.
+rsync --archive --compress --verbose $1 opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases

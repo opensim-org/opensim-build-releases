@@ -17,62 +17,17 @@ jobs:
         # To avoid an interactive prompt when uploading binaries to sourceforge.
         ssh_known_hosts: frs.sourceforge.net
       script:
-        - brew update
-        - brew install doxygen
-        - brew cleanup
-        - BASE_DIR=$(pwd)
-        - BTYPE=Release
-        - OSX_TARGET=10.10
-        - SWIG_VER=3.0.8
-        - SWIG_DIR=$BASE_DIR/swig
-        - OPENSIM_CORE_SOURCE_DIR="$BASE_DIR/opensim-core"
-        - OPENSIM_CORE_BUILD_DIR="$BASE_DIR/opensim-core-build"
-        - OPENSIM_CORE_INSTALL_DIR="$BASE_DIR/opensim-core-install"
-        - OPENSIM_CORE_DEP_SOURCE_DIR="$OPENSIM_CORE_SOURCE_DIR/dependencies"
-        - OPENSIM_CORE_DEP_BUILD_DIR="$BASE_DIR/opensim-core-dep-build"
-        - OPENSIM_CORE_DEP_INSTALL_DIR="$BASE_DIR/opensim-core-dep-install"
-        - OPENSIM_GUI_SOURCE_DIR="$BASE_DIR/opensim-gui"
-        - OPENSIM_GUI_BUILD_DIR="$BASE_DIR/opensim-gui-build"
-        - 
-        - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
-        - OPENSIM_GUI_GIT_TAG="$(xmllint --xpath "//info/opensim_gui_git_tag/text()" git_tags.xml)"
-        ## Obtain opensim-core source code.
-        - OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
-        - wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
-        - unzip $OPENSIM_CORE_ZIP
-        - mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
-        ## Superbuild dependencies. 
-        - mkdir $OPENSIM_CORE_DEP_BUILD_DIR
-        - cd $OPENSIM_CORE_DEP_BUILD_DIR
-        - DEP_CMAKE_ARGS=($OPENSIM_CORE_DEP_SOURCE_DIR -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_DEP_INSTALL_DIR -DCMAKE_BUILD_TYPE=$BTYPE)
-        - DEP_CMAKE_ARGS+=(-DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_TARGET)
-    
-        - printf '%s\n' "${DEP_CMAKE_ARGS[@]}"
-        - cmake "${DEP_CMAKE_ARGS[@]}"
-        - make -j4
-          # TODO - travis_wait 80 sh build_on_mac.sh -s 1
+        - travis_wait 80 sh build_on_mac.sh -s 1
       before_deploy:
         - cd $TRAVIS_BUILD_DIR
-          # TODO - sh set_up_ssh.sh
         - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
         - echo $OPENSIM_CORE_GIT_TAG
         - zip --symlinks --recurse-paths --quiet opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-core-dep-install
         - ls
-        ## Set up ssh for sourceforge.
-        - # Decrypt the private key stored in the repository to the tmp dir.
-        - openssl aes-256-cbc -K $encrypted_d246489684fa_key -iv $encrypted_d246489684fa_iv -in .deploy_myosin_sourceforge_rsa.enc -out /tmp/deploy_myosin_sourceforge_rsa -d
-        - # Start the ssh agent.
-        - eval "$(ssh-agent -s)"
-        - # Register this private key with this client (the travis machine).
-        - chmod 600 /tmp/deploy_myosin_sourceforge_rsa
-        - ssh-add /tmp/deploy_myosin_sourceforge_rsa
       deploy:
         provider: script
         skip_cleanup: true
-        # Uploads to sourceforge.net/projects/myosin
-        # See https://docs.travis-ci.com/user/deployment/custom/
-        # '--archive' preserves symlinks.
-        script: rsync --archive --compress --verbose opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+        script: bash upload_to_sourceforge.sh opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
         on:
           all_branches: true
     - stage: opensim-core
@@ -83,21 +38,17 @@ jobs:
       script:
         - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
         - echo $OPENSIM_CORE_GIT_TAG
-        - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/opensim-core-dep-$OPENSIM_CORE_GIT_TAG
+        - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
         - ls
         - unzip -q opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
         - ls
         - travis_wait 80 sh build_on_mac.sh -s 2
       before_deploy:
-        - sh set_up_ssh.sh
         - zip --symlinks --recurse-paths --quiet opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-core-install
       deploy:
         provider: script
         skip_cleanup: true
-        # Uploads to sourceforge.net/projects/myosin
-        # See https://docs.travis-ci.com/user/deployment/custom/
-        # '--archive' preserves symlinks.
-        script: rsync --archive --compress --verbose opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+        script: bash upload_to_sourceforge.sh opensim-core-$OPENSIM_CORE_GIT_TAG.zip
         on:
           all_branches: true
     - stage: opensim-gui
@@ -115,18 +66,14 @@ jobs:
         - ls
         - travis_wait 80 sh build_on_mac.sh -s 3
       before_deploy:
-        - sh set_up_ssh.sh
         - cd $TRAVIS_BUILD_DIR/opensim-gui-build
         - GUIVERSION=`cmake -L . | grep OPENSIMGUI_BUILD_VERSION | cut -d "=" -f2`
         - echo $GUIVERSION
-        - cd $TRAVIS_BUILD_DIR/opensim-gui/Gui/opensim/dist
+        - cd $TRAVIS_BUILD_DIR
       deploy:
         provider: script
         skip_cleanup: true
-        # Uploads to sourceforge.net/projects/myosin
-        # See https://docs.travis-ci.com/user/deployment/custom/
-        # '--archive' preserves symlinks.
-        script: rsync --archive --compress --verbose OpenSim-$GUIVERSION.pkg opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+        script: bash upload_to_sourceforge.sh $TRAVIS_BUILD_DIR/opensim-gui/Gui/opensim/dist/OpenSim-$GUIVERSION.pkg 
         on:
           all_branches: true
 
