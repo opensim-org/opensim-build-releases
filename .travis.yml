@@ -61,6 +61,8 @@ deploy:
   provider: script
   skip_cleanup: true
   script: rsync --archive --compress --verbose testing.txt opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+  on:
+    all_branches: true
 
 # Process for securely uploading files to Sourceforge, taken from
 # https://oncletom.io/2016/travis-ssh-deploy/:
