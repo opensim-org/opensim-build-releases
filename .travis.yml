@@ -16,13 +16,13 @@ addons:
   # To avoid an interactive prompt when uploading binaries to sourceforge.
   ssh_known_hosts: frs.sourceforge.net
 
-env:
-  global:
-    - BASE_DIR=$(pwd)
-    - SWIG_DIR=$BASE_DIR/swig
-    - SWIG_VER=2.0.8
+# env:
+#   global:
 
 before_install:
+  - BASE_DIR=$(pwd)
+  - SWIG_DIR=$BASE_DIR/swig
+  - SWIG_VER=2.0.8
   # Install dependencies.
   # TODO - brew update
   # TODO - brew install doxygen
