@@ -11,7 +11,7 @@ addons:
   
 jobs:
   include:
-    - stage: OPENSIM-CORE-DEP
+    - stage: opensim-core-dep
       os: osx
       addons:
         # To avoid an interactive prompt when uploading binaries to sourceforge.
@@ -20,7 +20,6 @@ jobs:
         - brew update
         - brew install doxygen
         - brew cleanup
-        - rm -rf "`brew cache`"
         - travis_wait 80 sh build_on_mac.sh -s 1
       before_deploy:
         - sh set_up_ssh.sh
@@ -37,7 +36,7 @@ jobs:
         script: rsync --archive --compress --verbose opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
         on:
           all_branches: true
-    - stage: OPENSIM-CORE
+    - stage: opensim-core
       os: osx
       addons:
         # To avoid an interactive prompt when uploading binaries to sourceforge.
@@ -62,7 +61,7 @@ jobs:
         script: rsync --archive --compress --verbose opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
         on:
           all_branches: true
-    - stage: OPENSIM-GUI
+    - stage: opensim-gui
       os: osx
       addons:
         # To avoid an interactive prompt when uploading binaries to sourceforge.
@@ -71,7 +70,6 @@ jobs:
         - brew update
         - brew cask install netbeans
         - brew cleanup
-        - rm -rf "`brew cache`"
         - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/opensim-core-$OPENSIM_CORE_GIT_TAG.zip
         - ls
         - unzip -q opensim-core-$OPENSIM_CORE_GIT_TAG.zip

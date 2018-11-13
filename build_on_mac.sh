@@ -47,7 +47,7 @@ then
     
     printf '%s\n' "${DEP_CMAKE_ARGS[@]}"
     cmake "${DEP_CMAKE_ARGS[@]}"
-    make -j8
+    make -j4
 
 fi
 
