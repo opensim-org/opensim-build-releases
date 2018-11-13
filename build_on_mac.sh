@@ -64,6 +64,15 @@ then
     make
     make -j8 install
 
+    if [[ $STAGE -ne 0 ]]
+    then
+        ## Obtain opensim-core source code.
+        OPENSIM_CORE_ZIP="$OPENSIM_CORE_GIT_TAG.zip"
+        wget https://github.com/opensim-org/opensim-core/archive/$OPENSIM_CORE_ZIP
+        unzip $OPENSIM_CORE_ZIP
+        mv opensim-core-$OPENSIM_CORE_GIT_TAG $OPENSIM_CORE_SOURCE_DIR
+    fi
+
     # Configure and build opensim-core.
     mkdir $OPENSIM_CORE_BUILD_DIR && cd $OPENSIM_CORE_BUILD_DIR
     ## Store CMake arguments in bash array.
