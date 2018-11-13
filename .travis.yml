@@ -20,6 +20,7 @@ jobs:
         - brew update
         - brew install doxygen
         - brew cleanup
+        - BASE_DIR=$(pwd)
         - BTYPE=Release
         - OSX_TARGET=10.10
         - SWIG_VER=3.0.8
