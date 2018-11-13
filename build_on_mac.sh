@@ -5,7 +5,7 @@ STAGE=0 # 0 means build all.
 # 3 means only build GUI.
 # Exit script if a command fails.
 set -e
-while getopts b:v:d: option
+while getopts b:s: option
 do
     case "${option}"
         in
