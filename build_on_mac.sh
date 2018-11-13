@@ -30,7 +30,7 @@ OPENSIM_GUI_BUILD_DIR="$BASE_DIR/opensim-gui-build"
 OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
 OPENSIM_GUI_GIT_TAG="$(xmllint --xpath "//info/opensim_gui_git_tag/text()" git_tags.xml)"
 
-if [ $STAGE -eq 0 || $STAGE -eq 1 ]
+if [[ $STAGE -eq 0 || $STAGE -eq 1 ]]
 then
 
     ## Obtain opensim-core source code.
@@ -52,7 +52,7 @@ then
 fi
 
 
-if [ $STAGE -eq 0 || $STAGE -eq 2 ]
+if [[ $STAGE -eq 0 || $STAGE -eq 2 ]]
 then
 
     # Install SWIG.
@@ -99,7 +99,7 @@ then
 fi
 
 
-if [ $STAGE -eq 0 || $STAGE -eq 3 ]
+if [[ $STAGE -eq 0 || $STAGE -eq 3 ]]
 then
 
     # Obtain opensim-gui source code.
