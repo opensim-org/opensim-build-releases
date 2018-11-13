@@ -1,5 +1,18 @@
-SWIG_VER=3.0.8
 BASE_DIR=$(pwd)
+SWIG_VER=3.0.8
+SWIG_DIR=$BASE_DIR/swig
+# Exit script if a command fails.
+set -e
+while getopts b:v:d: option
+do
+    case "${option}"
+        in
+        b) BASE_DIR=${OPTARG};;
+        v) SWIG_VER=${OPTARG};;
+        d) SWIG_DIR=${OPTARG};;
+    esac
+done
+
 BTYPE=Release
 OSX_TARGET=10.10
 OPENSIM_CORE_SOURCE_DIR="$BASE_DIR/opensim-core"
@@ -13,21 +26,6 @@ OPENSIM_GUI_BUILD_DIR="$BASE_DIR/opensim-gui-build"
 
 OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
 OPENSIM_GUI_GIT_TAG="$(xmllint --xpath "//info/opensim_gui_git_tag/text()" git_tags.xml)"
-
-
-# Install dependencies.
-brew update
-brew install doxygen
-brew cask install netbeans
-
-SWIG_DIR=$BASE_DIR/swig
-mkdir $BASE_DIR/swig-source && cd $BASE_DIR/swig-source
-wget https://github.com/swig/swig/archive/rel-$SWIG_VER.tar.gz
-tar xzf rel-$SWIG_VER.tar.gz && cd swig-rel-$SWIG_VER
-sh autogen.sh
-./configure --prefix=$SWIG_DIR --disable-ccache
-make
-make -j8 install
 
 
 ## Obtain opensim-core source code.
@@ -46,16 +44,12 @@ printf '%s\n' "${DEP_CMAKE_ARGS[@]}"
 cmake "${DEP_CMAKE_ARGS[@]}"
 make -j8
 
-# Force some cleanup of homebrew cache so we do not exceed availabe disk space
-brew cleanup
-rm -rf "`brew cache`"
-
 
 # Configure and build opensim-core.
 mkdir $OPENSIM_CORE_BUILD_DIR && cd $OPENSIM_CORE_BUILD_DIR
 ## Store CMake arguments in bash array.
 # https://stackoverflow.com/questions/1951506/add-a-new-element-to-an-array-without-specifying-the-index-in-bash
-OSIM_CMAKE_ARGS=($OPENSIM_CORE_SOURCE_DIR -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR -DCMAKE_BUILD_TYPE=$BTYPE -DCMAKE_CXX_FLAGS="$CXX_FLAGS")
+OSIM_CMAKE_ARGS=($OPENSIM_CORE_SOURCE_DIR -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR -DCMAKE_BUILD_TYPE=$BTYPE)
 
 # The deployed binaries are used by the GUI, which requires the non-FHS
 # layout.
@@ -73,8 +67,7 @@ OSIM_CMAKE_ARGS+=(-DBUILD_PYTHON_WRAPPING=ON -DBUILD_JAVA_WRAPPING=ON -DSWIG_EXE
 OSIM_CMAKE_ARGS+=(-DPYTHON_EXECUTABLE=/usr/bin/python)
 
 # Doxygen.
-# TODO update this URL.
-OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=OFF -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simtk.org/api_docs/simbody/latest/")
+OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api/index.html")
 
 OSIM_CMAKE_ARGS+=(-DBUILD_TESTING=OFF)
 
@@ -82,7 +75,7 @@ printf '%s\n' "${OSIM_CMAKE_ARGS[@]}"
 cmake "${OSIM_CMAKE_ARGS[@]}"
 
 make doxygen
-make -j$NPROC
+make -j$NPROC install
 
 
 # Obtain opensim-gui source code.
