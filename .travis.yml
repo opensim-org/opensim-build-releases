@@ -102,7 +102,8 @@ jobs:
         - OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api/index.html")
         - 
         - OSIM_CMAKE_ARGS+=(-DBUILD_TESTING=OFF)
-        - 
+        # Reduce verbosity of build log.
+        - OSIM_CMAKE_ARGS+=(-DCMAKE_INSTALL_MESSAGE="NEVER")
         - printf '%s\n' "${OSIM_CMAKE_ARGS[@]}"
         - cmake "${OSIM_CMAKE_ARGS[@]}"
         - 
