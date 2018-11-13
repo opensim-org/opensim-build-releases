@@ -52,7 +52,7 @@ before_deploy:
   # Register this private key with this client (the travis machine).
   - chmod 600 /tmp/deploy_myosin_sourceforge_rsa
   - ssh-add /tmp/deploy_myosin_sourceforge_rsa
-  - cat 'hello cat' > testing.txt # TODO
+  - echo 'hello cat' > testing.txt # TODO
 
 deploy:
   # Uploads to sourceforge.net/projects/myosin
