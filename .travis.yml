@@ -26,7 +26,7 @@ jobs:
         # - brew update
         # - brew install doxygen
         # - brew cleanup
-        - travis_wait 80 sh build_on_mac.sh -s 1
+        - travis_wait 80 bash build_on_mac.sh -s 1
       before_deploy:
         - cd $TRAVIS_BUILD_DIR
         - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
@@ -115,8 +115,10 @@ jobs:
         - 
         - make doxygen
         - make -j4 install
-        # TODO - travis_wait 80 sh build_on_mac.sh -s 2
+        # TODO - travis_wait 80 bash build_on_mac.sh -s 2
       before_deploy:
+        - cd $TRAVIS_BUILD_DIR
+        - ls
         - zip --symlinks --recurse-paths --quiet opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-core-install
       deploy:
         provider: script
@@ -137,7 +139,7 @@ jobs:
         - ls
         - unzip -q opensim-core-$OPENSIM_CORE_GIT_TAG.zip
         - ls
-        - travis_wait 80 sh build_on_mac.sh -s 3
+        - travis_wait 80 bash build_on_mac.sh -s 3
       before_deploy:
         - cd $TRAVIS_BUILD_DIR/opensim-gui-build
         - GUIVERSION=`cmake -L . | grep OPENSIMGUI_BUILD_VERSION | cut -d "=" -f2`
