@@ -114,7 +114,7 @@ jobs:
         - cmake "${OSIM_CMAKE_ARGS[@]}"
         - 
         - make doxygen
-        - make -j$NPROC install
+        - make -j4 install
         # TODO - travis_wait 80 sh build_on_mac.sh -s 2
       before_deploy:
         - zip --symlinks --recurse-paths --quiet opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-core-install
