@@ -12,4 +12,4 @@ ssh-add /tmp/deploy_myosin_sourceforge_rsa
 ## Upload to sourceforge.net/projects/myosin
 # See https://docs.travis-ci.com/user/deployment/custom/
 # '--archive' preserves symlinks.
-rsync --archive --compress --verbose $1 opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
+rsync --archive --compress --verbose $1 opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases/mac
