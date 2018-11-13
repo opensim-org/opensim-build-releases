@@ -41,6 +41,7 @@ before_install:
 
 script:
     # TODO - travis_wait 80 sh build_on_mac.sh -b $BASE_DIR -v $SWIG_VER -d $SWIG_DIR
+  - echo 'TODO'
 
 before_deploy:
   ## Set up ssh for sourceforge.
