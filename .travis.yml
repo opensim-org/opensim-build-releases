@@ -8,10 +8,6 @@ git:
   # the submodules.
   submodules: false
 
-matrix:
-  include:
-    - os: osx
-
 addons:
   # To avoid an interactive prompt when uploading binaries to sourceforge.
   ssh_known_hosts: frs.sourceforge.net
@@ -23,8 +19,10 @@ env:
   
 jobs:
   include:
-    - stage: opensim-core-dep
+    - stage: OPENSIM-CORE-DEP
+      os: osx
       script:
+        - echo $OPENSIM_CORE_GIT_TAG
         - brew update
         - brew install doxygen
         - brew cleanup
@@ -41,7 +39,8 @@ jobs:
         # See https://docs.travis-ci.com/user/deployment/custom/
         # '--archive' preserves symlinks.
         script: rsync --archive --compress --verbose opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
-    - stage: opensim-core
+    - stage: OPENSIM-CORE
+      os: osx
       script:
         - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/opensim-core-dep-$OPENSIM_CORE_GIT_TAG
         - ls
@@ -58,7 +57,8 @@ jobs:
         # See https://docs.travis-ci.com/user/deployment/custom/
         # '--archive' preserves symlinks.
         script: rsync --archive --compress --verbose opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-bot@frs.sourceforge.net:/home/frs/project/myosin/opensim-build-releases
-    - stage: opensim-gui
+    - stage: OPENSIM-GUI
+      os: osx
       script:
         - brew update
         - brew cask install netbeans
