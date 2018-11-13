@@ -53,11 +53,19 @@ jobs:
           # TODO - travis_wait 80 sh build_on_mac.sh -s 1
       before_deploy:
         - cd $TRAVIS_BUILD_DIR
-        - sh set_up_ssh.sh
+          # TODO - sh set_up_ssh.sh
         - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
         - echo $OPENSIM_CORE_GIT_TAG
         - zip --symlinks --recurse-paths --quiet opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-core-dep-install
         - ls
+        ## Set up ssh for sourceforge.
+        - # Decrypt the private key stored in the repository to the tmp dir.
+        - openssl aes-256-cbc -K $encrypted_d246489684fa_key -iv $encrypted_d246489684fa_iv -in .deploy_myosin_sourceforge_rsa.enc -out /tmp/deploy_myosin_sourceforge_rsa -d
+        - # Start the ssh agent.
+        - eval "$(ssh-agent -s)"
+        - # Register this private key with this client (the travis machine).
+        - chmod 600 /tmp/deploy_myosin_sourceforge_rsa
+        - ssh-add /tmp/deploy_myosin_sourceforge_rsa
       deploy:
         provider: script
         skip_cleanup: true
