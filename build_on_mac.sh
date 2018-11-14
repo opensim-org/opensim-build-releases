@@ -55,7 +55,7 @@ fi
 if [[ $STAGE -eq 0 || $STAGE -eq 2 ]]
 then
 
-    # Install SWIG.
+    ## Install SWIG.
     mkdir $BASE_DIR/swig-source && cd $BASE_DIR/swig-source
     wget --quiet https://github.com/swig/swig/archive/rel-$SWIG_VER.tar.gz
     tar xzf rel-$SWIG_VER.tar.gz && cd swig-rel-$SWIG_VER
@@ -78,32 +78,33 @@ then
     ## Store CMake arguments in bash array.
     # https://stackoverflow.com/questions/1951506/add-a-new-element-to-an-array-without-specifying-the-index-in-bash
     OSIM_CMAKE_ARGS=($OPENSIM_CORE_SOURCE_DIR -DCMAKE_INSTALL_PREFIX=$OPENSIM_CORE_INSTALL_DIR -DCMAKE_BUILD_TYPE=$BTYPE)
-    
+
     # The deployed binaries are used by the GUI, which requires the non-FHS
     # layout.
     OSIM_CMAKE_ARGS+=(-DOPENSIM_INSTALL_UNIX_FHS=OFF)
-    
+
     # The minimum macOS/OSX version we support.
     OSIM_CMAKE_ARGS+=(-DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_TARGET)
-    
+
     # Dependencies.
     OSIM_CMAKE_ARGS+=(-DOPENSIM_DEPENDENCIES_DIR=$OPENSIM_CORE_DEP_INSTALL_DIR -DWITH_BTK:BOOL=ON)
-    
+
     # Bindings.
     OSIM_CMAKE_ARGS+=(-DBUILD_PYTHON_WRAPPING=ON -DBUILD_JAVA_WRAPPING=ON -DSWIG_EXECUTABLE=$SWIG_DIR/bin/swig)
     # On Mac, use system python instead of Homebrew python.
     OSIM_CMAKE_ARGS+=(-DPYTHON_EXECUTABLE=/usr/bin/python)
-    
+
     # Doxygen.
     OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api/index.html")
-    
+
     OSIM_CMAKE_ARGS+=(-DBUILD_TESTING=OFF)
-    
+    # Reduce verbosity of build log.
+    OSIM_CMAKE_ARGS+=(-DCMAKE_INSTALL_MESSAGE="NEVER")
     printf '%s\n' "${OSIM_CMAKE_ARGS[@]}"
     cmake "${OSIM_CMAKE_ARGS[@]}"
-    
+
     make doxygen
-    make -j$NPROC install
+    make -j4 install
 
 fi
 
