@@ -1,0 +1,119 @@
+language: java
+
+git:
+  # Travis CI tries to clone submodules for us, but we don't want all
+  # the submodules.
+  submodules: false
+
+addons:
+  # To avoid an interactive prompt when uploading binaries to sourceforge.
+  ssh_known_hosts: frs.sourceforge.net
+
+stages:
+  - opensim-core-dep
+  - opensim-core
+  - opensim-gui
+  
+jobs:
+  include:
+    - stage: opensim-core-dep
+      os: osx
+      addons:
+        # To avoid an interactive prompt when uploading binaries to sourceforge.
+        ssh_known_hosts: frs.sourceforge.net
+      script:
+        # Uncomment when we build simbody doxygen.
+        # - brew update
+        # - brew install doxygen
+        # - brew cleanup
+        - travis_wait 80 bash build_on_mac.sh -s 1
+      before_deploy:
+        - cd $TRAVIS_BUILD_DIR
+        - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
+        - echo $OPENSIM_CORE_GIT_TAG
+        - zip --symlinks --recurse-paths --quiet opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip opensim-core-dep-install
+        - ls
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: bash upload_to_sourceforge.sh opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
+        on:
+          all_branches: true
+    - stage: opensim-core
+      os: osx
+      addons:
+        # To avoid an interactive prompt when uploading binaries to sourceforge.
+        ssh_known_hosts: frs.sourceforge.net
+      script:
+        - brew update
+        - brew install doxygen
+        - brew cleanup
+        - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
+        - echo $OPENSIM_CORE_GIT_TAG
+        - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/mac/opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
+        - ls
+        - unzip -q opensim-core-dep-$OPENSIM_CORE_GIT_TAG.zip
+        - ls
+        - travis_wait 80 bash build_on_mac.sh -s 2
+      before_deploy:
+        - cd $TRAVIS_BUILD_DIR
+        - ls
+        - zip --symlinks --recurse-paths --quiet opensim-core-$OPENSIM_CORE_GIT_TAG.zip opensim-core-install
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: bash upload_to_sourceforge.sh opensim-core-$OPENSIM_CORE_GIT_TAG.zip
+        on:
+          all_branches: true
+    - stage: opensim-gui
+      os: osx
+      addons:
+        # To avoid an interactive prompt when uploading binaries to sourceforge.
+        ssh_known_hosts: frs.sourceforge.net
+      script:
+        - brew update
+        - brew cask install netbeans
+        - brew cleanup
+        - OPENSIM_CORE_GIT_TAG="$(xmllint --xpath "//info/opensim_core_git_tag/text()" git_tags.xml)"
+        - wget https://prdownloads.sourceforge.net/myosin/opensim-build-releases/mac/opensim-core-$OPENSIM_CORE_GIT_TAG.zip
+        - ls
+        - unzip -q opensim-core-$OPENSIM_CORE_GIT_TAG.zip
+        - ls
+        - travis_wait 80 bash build_on_mac.sh -s 3
+      before_deploy:
+        - cd $TRAVIS_BUILD_DIR/opensim-gui-build
+        - GUIVERSION=`cmake -L . | grep OPENSIMGUI_BUILD_VERSION | cut -d "=" -f2`
+        - echo $GUIVERSION
+        - cd $TRAVIS_BUILD_DIR
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: bash upload_to_sourceforge.sh $TRAVIS_BUILD_DIR/opensim-gui/Gui/opensim/dist/OpenSim-$GUIVERSION.pkg 
+        on:
+          all_branches: true
+
+# Process for securely uploading files to Sourceforge, taken from
+# https://oncletom.io/2016/travis-ssh-deploy/:
+#
+# Contact chrisdembia if you need the login information for opensim-bot at
+# sourceforge, to manage myosin.sourceforge.net.
+#
+# You must install the travis command-line tool: `gem install travis`
+# Locally, from the root of the repository:
+# Create a 4096-bit RSA key with comment, private key 
+# $ ssh-keygen -t rsa -b 4096 -C 'opensim-bot@sourceforge.net' -f .deploy_myosin_sourceforge_rsa
+# When prompted for a passphrase, just hit enter (twice).
+# Encrypt the private key, add decryption code to .travis.yml. First make a
+# backup copy of .travis.yml.
+# $ travis encrypt-file Installer/.deploy_myosin_sourceforge_rsa --add
+# Manually edit the .travis.yml file to clean up the added lines and restore
+# comments to the file; put the decryption in the before_deploy step.
+# Remove the unencrypted private key. DO NOT commmit the unencrypted private
+# key.
+# $ rm -f .deploy_myosin_sourceforge_rsa
+# Manually, log into the sourceforge website (user opensim-bot) and add the
+# public key (contents of .deploy_myosin_sourceforge_rsa.pub) in
+# Account Settings > SSH Settings.
+# Now you can delete the public key file from your local machine.
+# Commit the encrypted private key and the changes to .travis.yml.
+# $ git add .travis.yml .deploy_myosin_sourceforge_rsa.enc
