@@ -104,7 +104,7 @@ mkdir $BASE_DIR\release
 cd $BASE_DIR\release
 # TODO use shortened git commit if not using a tag.
 $OPENSIM_CORE_SOURCE_ZIP = "$BASE_DIR\release\OpenSimCore-$OPENSIM_CORE_GIT_TAG-source.zip"
-& "C:\Program Files\7-Zip\7z.exe" a "$OPENSIM_CORE_SOURCE_ZIP" "$OPENSIM_CORE_INSTALL_DIR"
+& "C:\Program Files\7-Zip\7z.exe" a -xr!*\.git/ "$OPENSIM_CORE_SOURCE_ZIP" "$OPENSIM_CORE_SOURCE_DIR"
 
 # TODO ResourceHacker. Or can NSIS set the application icon for us?
 # TODO Visual C++ redistributable.
