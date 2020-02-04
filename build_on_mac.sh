@@ -95,7 +95,7 @@ then
     OSIM_CMAKE_ARGS+=(-DPYTHON_EXECUTABLE=/usr/bin/python)
 
     # Doxygen.
-    OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api")
+    OSIM_CMAKE_ARGS+=(-DOPENSIM_DOXYGEN_USE_MATHJAX=ON -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/3.7.0/")
 
     OSIM_CMAKE_ARGS+=(-DBUILD_TESTING=OFF)
     # Reduce verbosity of build log.

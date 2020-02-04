@@ -66,7 +66,7 @@ cmake "$OPENSIM_CORE_SOURCE_DIR" `
     -DWITH_BTK:BOOL=ON `
     -DBUILD_TESTING=OFF `
     -DOPENSIM_DOXYGEN_USE_MATHJAX=OFF `
-    -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/simbody-3.6-doxygen/api"
+    -DOPENSIM_SIMBODY_DOXYGEN_LOCATION="https://simbody.github.io/3.7.0/"
 
 # Build.
 cmake --build . --target doxygen --config Release
