@@ -4,9 +4,9 @@ param([string]$CMAKE_TOOLSET="v141")
 $CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
 $env:JAVA_HOME = "C:\\Program Files\\Java\\jdk1.8.0"
 # Note: python 2.7 32bit is already on the path. We want v2.7 64bit,
-# so we must add v2.7 64bit earlier on the PATH so that CMake finds it when
+# so we must add v3.7 64bit earlier on the PATH so that CMake finds it when
 # configuring.
-$PYTHON_DIR = "C:\\Python27-x64"
+$PYTHON_DIR = "C:\\Python37-x64"
 # Used by FindAnt.cmake:
 $env:ANT_HOME = "C:\\Program Files\\NetBeans 8.2\\extide\\ant"
 $NSIS_DIR = "C:\\Program Files (x86)\\NSIS"
